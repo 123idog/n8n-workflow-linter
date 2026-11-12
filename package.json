@@ -1,0 +1,14 @@
+{
+  "name": "n8n-workflow-linter",
+  "version": "0.1.0",
+  "description": "Offline linter for n8n workflow JSON: catches silent failures before deploy (stray '=' expressions, capped Data Table reads, missing retries, broken node references, hard-coded secrets).",
+  "main": "src/index.js",
+  "bin": { "n8n-lint": "bin/n8n-lint.js" },
+  "files": ["src", "bin"],
+  "scripts": { "test": "node --test", "lint:example": "node bin/n8n-lint.js examples/bad-workflow.json" },
+  "engines": { "node": ">=18" },
+  "keywords": ["n8n", "linter", "workflow", "automation", "static-analysis", "ci"],
+  "author": "Ido Guy",
+  "license": "MIT",
+  "repository": { "type": "git", "url": "https://github.com/123idog/n8n-workflow-linter.git" }
+}

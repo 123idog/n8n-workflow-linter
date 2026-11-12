@@ -1,0 +1,34 @@
+{
+  "name": "Demo | Form >> CRM | clean",
+  "nodes": [
+    { "id": "1", "name": "Every Morning", "type": "n8n-nodes-base.scheduleTrigger", "typeVersion": 1.2, "position": [0, 0],
+      "parameters": { "rule": { "interval": [{ "triggerAtHour": 9 }] } } },
+    { "id": "2", "name": "Get Pending Rows", "type": "n8n-nodes-base.dataTable", "typeVersion": 1, "position": [200, 0],
+      "parameters": { "operation": "get", "dataTableId": "demo-table", "returnAll": true } },
+    { "id": "3", "name": "Only Ready", "type": "n8n-nodes-base.filter", "typeVersion": 2, "position": [400, 0],
+      "parameters": { "conditions": { "conditions": [
+        { "leftValue": "={{ $json.status }}", "rightValue": "ready", "operator": { "type": "string", "operation": "equals" } }
+      ] } } },
+    { "id": "4", "name": "Create Lead", "type": "n8n-nodes-base.httpRequest", "typeVersion": 4.2, "position": [600, 0],
+      "retryOnFail": true, "maxTries": 3, "waitBetweenTries": 2000,
+      "parameters": {
+        "method": "POST",
+        "url": "https://crm.example.com/api/leads",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "jsonBody": "={{ JSON.stringify({ name: $('Get Pending Rows').item.json.name }) }}"
+      },
+      "credentials": { "httpHeaderAuth": { "id": "demo", "name": "CRM API" } } },
+    { "id": "5", "name": "AI Agent", "type": "@n8n/n8n-nodes-langchain.agent", "typeVersion": 2, "position": [800, 0], "parameters": {} },
+    { "id": "6", "name": "Chat Model", "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi", "typeVersion": 1, "position": [800, 200],
+      "parameters": {}, "credentials": { "openAiApi": { "id": "demo", "name": "LLM" } } }
+  ],
+  "connections": {
+    "Every Morning": { "main": [[{ "node": "Get Pending Rows", "type": "main", "index": 0 }]] },
+    "Get Pending Rows": { "main": [[{ "node": "Only Ready", "type": "main", "index": 0 }]] },
+    "Only Ready": { "main": [[{ "node": "Create Lead", "type": "main", "index": 0 }]] },
+    "Create Lead": { "main": [[{ "node": "AI Agent", "type": "main", "index": 0 }]] },
+    "Chat Model": { "ai_languageModel": [[{ "node": "AI Agent", "type": "ai_languageModel", "index": 0 }]] }
+  },
+  "settings": { "timezone": "Europe/London", "errorWorkflow": "demo-error-handler" }
+}

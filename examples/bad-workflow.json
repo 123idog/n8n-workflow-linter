@@ -1,0 +1,31 @@
+{
+  "name": "Demo | Form >> CRM | broken on purpose",
+  "nodes": [
+    { "id": "1", "name": "Every Morning", "type": "n8n-nodes-base.scheduleTrigger", "typeVersion": 1.2, "position": [0, 0],
+      "parameters": { "rule": { "interval": [{ "triggerAtHour": 9 }] } } },
+    { "id": "2", "name": "Get Pending Rows", "type": "n8n-nodes-base.dataTable", "typeVersion": 1, "position": [200, 0],
+      "parameters": { "operation": "get", "dataTableId": "demo-table" } },
+    { "id": "3", "name": "Only Ready", "type": "n8n-nodes-base.filter", "typeVersion": 2, "position": [400, 0],
+      "parameters": { "conditions": { "conditions": [
+        { "leftValue": "={{ $json.status }}", "rightValue": "=ready", "operator": { "type": "string", "operation": "equals" } }
+      ] } } },
+    { "id": "4", "name": "Create Lead", "type": "n8n-nodes-base.httpRequest", "typeVersion": 4.2, "position": [600, 0],
+      "parameters": {
+        "method": "POST",
+        "url": "https://crm.example.com/api/leads",
+        "sendHeaders": true,
+        "headerParameters": { "parameters": [ { "name": "Authorization", "value": "Bearer demo_4f8a2b9c7d1e6f3a5b8c9d0e" } ] },
+        "jsonBody": "={{ JSON.stringify({ name: $('Get Rows').item.json.name }) }}"
+      } },
+    { "id": "5", "name": "Old Slack Ping", "type": "n8n-nodes-base.slack", "typeVersion": 2.2, "position": [600, 200],
+      "parameters": { "text": "done" }, "credentials": { "slackApi": { "id": "demo", "name": "Demo Slack" } } },
+    { "id": "6", "name": "Debug Step", "type": "n8n-nodes-base.noOp", "typeVersion": 1, "position": [800, 0], "disabled": true, "parameters": {} }
+  ],
+  "connections": {
+    "Every Morning": { "main": [[{ "node": "Get Pending Rows", "type": "main", "index": 0 }]] },
+    "Get Pending Rows": { "main": [[{ "node": "Only Ready", "type": "main", "index": 0 }]] },
+    "Only Ready": { "main": [[{ "node": "Create Lead", "type": "main", "index": 0 }]] },
+    "Create Lead": { "main": [[{ "node": "Write Back", "type": "main", "index": 0 }]] }
+  },
+  "settings": {}
+}
