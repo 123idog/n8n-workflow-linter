@@ -110,6 +110,6 @@ There are 17 tests covering every rule, including its false-positive cases (AI s
 
 ## Author
 
-**Ido Guy**, AI Engineer, running 100+ production n8n workflows. [LinkedIn](https://www.linkedin.com/in/ido-guy)
+**Ido Guy**, AI & Automation Engineer, running 100+ production n8n workflows. [LinkedIn](https://www.linkedin.com/in/ido-guy)
 
 MIT License. Not affiliated with n8n GmbH.
