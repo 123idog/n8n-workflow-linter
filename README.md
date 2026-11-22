@@ -45,7 +45,7 @@ examples/bad-workflow.json  (Demo | Form >> CRM | broken on purpose)
 | N009 | warning | Schedule trigger without an explicit workflow timezone |
 | N010 | info | Disabled nodes left in the workflow |
 
-`n8n-lint --rules` prints each rule with the reason it exists. Every rule comes from a failure I saw in production; the stories are in the [n8n Production Playbook](https://github.com/123idog/n8n-production-playbook).
+`n8n-lint --rules` prints each rule with the reason it exists. Every rule comes from a failure I saw in production.
 
 ---
 
